@@ -3,40 +3,53 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:guess_number/game.dart';
+
 void main() {
-  const maxRandom = 100;
-  var random = Random();
-  var answer = random.nextInt(maxRandom) + 1;
-  var isCorrect = false;
-  var guessCount = 0;
+  var game = MyGame();
 
-  print('╔════════════════════════════════════════');
-  print('║            GUESS THE NUMBER            ');
-  print('╟────────────────────────────────────────');
+  while(true){
+    print('╔════════════════════════════════════════');
+    print('║            GUESS THE NUMBER            ');
+    print('╟────────────────────────────────────────');
+    var guessCount = 0;
+    var isCorrect = false;
+    do {
+      stdout.write('║ Guess the number between 1 and ${MyGame.maxRandom}: ');
+      var input = stdin.readLineSync();
+      var guess = int.tryParse(input!);
 
-  do {
-    stdout.write('║ Guess the number between 1 and $maxRandom: ');
-    var input = stdin.readLineSync();
-    var guess = int.tryParse(input!);
-    if (guess == null) {
-      continue;
+      if (guess == null) {
+        continue;
+      }
+      guessCount++;
+      if (game.doGuess(guess) == 1) {
+        print('║ ➜ $guess is TOO HIGH! ▲');
+        print('╟────────────────────────────────────────');
+      } else if (game.doGuess(guess) == -1) {
+        print('║ ➜ $guess is TOO LOW! ▼');
+        print('╟────────────────────────────────────────');
+      } else {
+        print('║ ➜ $guess is CORRECT ❤, total guesses: $guessCount');
+        print('╟────────────────────────────────────────');
+        isCorrect = true;
+      }
+    } while (!isCorrect);
+
+    print('║                 THE END                ');
+    print('╚════════════════════════════════════════');
+
+    var get = "";
+    while(true){
+      stdout.write('play again? (Y/N): ');
+      get = stdin.readLineSync()!;
+      if(get.toUpperCase()=='Y'){
+         break;
+      }
+      else if(get.toUpperCase()=='N'){
+        exit (0);
+      }
     }
-
-    guessCount++;
-
-    if (guess > answer) {
-      print('║ ➜ $guess is TOO HIGH! ▲');
-      print('╟────────────────────────────────────────');
-    } else if (guess < answer) {
-      print('║ ➜ $guess is TOO LOW! ▼');
-      print('╟────────────────────────────────────────');
-    } else {
-      print('║ ➜ $guess is CORRECT ❤, total guesses: $guessCount');
-      print('╟────────────────────────────────────────');
-      isCorrect = true;
-    }
-  } while (!isCorrect);
-
-  print('║                 THE END                ');
-  print('╚════════════════════════════════════════');
-}
+    game = MyGame();
+  }
+  }
